@@ -48,3 +48,135 @@ streamlit run code_assistant.py
 
 # Run Recommender System
 streamlit run smart_recommender.py
+Here’s a **clear, professional “OUTPUT” section** you can add to your project / README / viva 👇
+
+---
+
+# 📊 Project Output
+
+## 🧠 1. AI Code Documentation Assistant
+
+### 🔍 User Input
+
+```
+Where is the authentication logic?
+```
+
+### ✅ System Output
+
+```
+🔍 Found in your code:
+
+📄 demo_project/app.py - function: authenticate_user (Score: 0.92)
+
+def authenticate_user(username, password):
+    """Verify user credentials"""
+    return username == "admin" and password == "secret"
+
+Description: Verify user credentials
+```
+
+---
+
+### 🔍 User Input
+
+```
+Show me database functions
+```
+
+### ✅ System Output
+
+```
+📄 demo_project/app.py - function: get_database_connection (Score: 0.89)
+
+def get_database_connection():
+    """Create database connection"""
+    return {"host": "localhost", "port": 5432}
+
+Description: Create database connection
+```
+
+---
+
+### 💬 What the Output Shows
+
+* 📂 File location of code
+* 🧩 Function/Class name
+* 💻 Actual code snippet
+* 📝 Description (docstring)
+* 📊 Relevance score
+
+👉 This proves the system understands **natural language queries** and retrieves **relevant code intelligently**.
+
+---
+
+# 🎯 2. Smart Product Recommender System
+
+## 🔍 User Input
+
+```
+something for gaming
+```
+
+## ✅ System Output
+
+```
+📦 Recommendations:
+
+🎮 Gaming Laptop (Score: 0.95)
+High performance laptop for gaming with RTX 3060
+
+🎧 Gaming Headset (Score: 0.91)
+Surround sound headset for gaming
+
+⌨️ Mechanical Keyboard (Score: 0.87)
+RGB mechanical keyboard with blue switches
+```
+
+---
+
+## 🔄 User Action
+
+```
+Select: Gaming Laptop
+```
+
+## ✅ System Output
+
+```
+Products similar to Gaming Laptop:
+
+• Gaming Headset - Surround sound headset for gaming  
+• Mechanical Keyboard - RGB mechanical keyboard  
+• Wireless Mouse - Ergonomic wireless mouse  
+```
+
+---
+
+# 📈 Final Output Summary
+
+## 🔹 Code Assistant
+
+* Converts code into **vector embeddings**
+* Converts query into **vector**
+* Finds **most relevant code snippets**
+* Displays results instantly
+
+## 🔹 Recommender System
+
+* Understands **meaning of user query**
+* Suggests **contextually similar products**
+* Works beyond keyword matching
+
+---
+
+# 🚀 Final Understanding (Simple)
+
+👉 Your project output behaves like:
+
+* 🔎 **Google Search for Code**
+* 🤖 **AI Assistant for Developers**
+* 🎯 **Recommendation Engine (like Amazon/Netflix)**
+
+
+
