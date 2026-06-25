@@ -1,0 +1,1 @@
+mkdir -p /home/claude/ai-code-docs/{src/ai_code_docs,tests,docs,.github/workflows} && echo "done"
