@@ -1,216 +1,289 @@
-# 🚀 AI-Powered Code Documentation & Search Assistant
+# 🤖 AI-Powered Code Documentation & Search Assistant
 
-## 🔍 Overview
-This project is an intelligent AI-powered system designed to simplify code understanding and exploration. It allows developers to upload or index their codebase and interact with it using natural language queries. Instead of manually searching through files, users can ask questions like *“Where is the authentication logic?”* or *“Show me database functions”* and instantly receive relevant code snippets with explanations.
+> Instantly generate docstrings, answer questions about your codebase, and build beautiful GitHub READMEs — all from the command line, powered by Claude AI.
 
-In addition to code search, the project also includes a **Smart Product Recommender System**, demonstrating how semantic search can be applied to real-world use cases beyond programming.
 
----
+## 📖 Table of Contents
 
-## 💡 Key Features
-- 🔎 **Natural Language Code Search** – Ask questions in plain English  
-- 🧠 **Semantic Understanding** – Uses embeddings to understand meaning, not just keywords  
-- 📂 **Code Indexing Pipeline** – Extracts functions, classes, and docstrings automatically  
-- ⚡ **Fast Vector Search** – Powered by Endee vector database  
-- 🎯 **Smart Recommender System** – Suggests similar products based on context  
-- 🖥️ **Interactive UI** – Built using Streamlit for an easy user experience  
-
----
-
-## 🛠️ Tech Stack
-- **Python** – Core programming language  
-- **Streamlit** – Frontend interface  
-- **Endee** – Vector database for similarity search  
-- **Sentence Transformers** – Embedding generation  
-- **Docker** – Containerized database setup  
+- [Overview](#overview)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+  - [Generate Docs](#1-generate-docs)
+  - [Ask Questions](#2-ask-questions)
+  - [Build README](#3-build-readme)
+- [Running Tests](#running-tests)
+- [How It Works](#how-it-works)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## ⚙️ How It Works
-1. Code files are parsed to extract meaningful components (functions/classes)  
-2. Each component is converted into vector embeddings  
-3. User queries are also converted into vectors  
-4. Endee performs similarity search to find the most relevant results  
-5. Matching code snippets are displayed instantly  
+## Overview
+
+**ai-code-docs** is a Python CLI tool that uses the [Anthropic Claude API](https://anthropic.com) to automate the most tedious parts of developer documentation:
+
+| Task | What it does |
+|---|---|
+| `generate` | Reads a `.py` file and writes Google / NumPy / Sphinx / Markdown docs |
+| `ask` | Answers natural-language questions about any codebase |
+| `readme` | Builds a full `README.md` from your project metadata |
+
+All three commands work from your terminal with a single `ANTHROPIC_API_KEY` environment variable.
 
 ---
 
-## ▶️ Getting Started
+## ✨ Features
+
+- **Multi-style docstring generation** — Google, NumPy, Sphinx reST, and Markdown
+- **Three detail levels** — Concise, Detailed, or With Examples
+- **Codebase Q&A** — Index files or whole directories, then ask anything in plain English
+- **README builder** — Generates polished GitHub READMEs from prompts
+- **Stdin support** — Pipe code directly: `cat myfile.py | ai-code-docs generate -`
+- **File & directory indexing** — Search across your entire project in one command
+- **Clean architecture** — Thin wrappers, fully mockable, easy to extend
+
+---
+
+## 🗂 Project Structure
+
+```
+ai-code-docs/
+├── src/
+│   └── ai_code_docs/
+│       ├── __init__.py        # Package metadata
+│       ├── client.py          # Anthropic SDK wrapper
+│       ├── generator.py       # Docstring / doc generation
+│       ├── searcher.py        # Codebase indexing & Q&A
+│       ├── readme_builder.py  # README.md generation
+│       └── cli.py             # Click CLI entry point
+├── tests/
+│   ├── test_generator.py
+│   └── test_searcher.py
+├── pyproject.toml
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## ✅ Requirements
+
+- Python **3.9+**
+- An [Anthropic API key](https://console.anthropic.com/)
+
+---
+
+## 🚀 Installation
+
+### 1. Clone the repository
+
 ```bash
-# Start vector database
-docker-compose up -d
+git clone https://github.com/YOUR_USERNAME/ai-code-docs.git
+cd ai-code-docs
+```
 
-# Install dependencies
-pip install -r requirements.txt
+### 2. Create and activate a virtual environment
 
-# Run Code Assistant
-streamlit run code_assistant.py
+```bash
+python -m venv .venv
+source .venv/bin/activate        # macOS / Linux
+.venv\Scripts\activate           # Windows
+```
 
-# Run Recommender System
-streamlit run smart_recommender.py
-Here’s a **clear, professional “OUTPUT” section** you can add to your project / README / viva 👇
+### 3. Install the package
+
+```bash
+pip install -e ".[dev]"
+```
+
+This installs the `ai-code-docs` CLI command and all dependencies.
 
 ---
 
-# 📊 Project Output
+## ⚙️ Configuration
 
-## 🧠 1. AI Code Documentation Assistant
+Export your Anthropic API key before running any command:
 
-### 🔍 User Input
-
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."   # macOS / Linux
+set ANTHROPIC_API_KEY=sk-ant-...        # Windows CMD
+$env:ANTHROPIC_API_KEY="sk-ant-..."     # PowerShell
 ```
-Where is the authentication logic?
-```
 
-### ✅ System Output
-
-```
-🔍 Found in your code:
-
-📄 demo_project/app.py - function: authenticate_user (Score: 0.92)
-
-def authenticate_user(username, password):
-    """Verify user credentials"""
-    return username == "admin" and password == "secret"
-
-Description: Verify user credentials
-```
+You can also add it to a `.env` file and load it with `python-dotenv` or `direnv`.
 
 ---
 
-### 🔍 User Input
+## 🛠 Usage
 
-```
-Show me database functions
-```
+### 1. Generate Docs
 
-### ✅ System Output
+Generate documentation for any Python file:
 
-```
-📄 demo_project/app.py - function: get_database_connection (Score: 0.89)
+```bash
+# Google-style docstrings (default)
+ai-code-docs generate src/ai_code_docs/searcher.py
 
-def get_database_connection():
-    """Create database connection"""
-    return {"host": "localhost", "port": 5432}
+# NumPy-style, detailed, saved to a file
+ai-code-docs generate mymodule.py --style numpy --detail detailed --output docs/mymodule.md
 
-Description: Create database connection
-```
+# Pipe from stdin
+cat utils.py | ai-code-docs generate -
 
----
-
-### 💬 What the Output Shows
-
-* 📂 File location of code
-* 🧩 Function/Class name
-* 💻 Actual code snippet
-* 📝 Description (docstring)
-* 📊 Relevance score
-
-👉 This proves the system understands **natural language queries** and retrieves **relevant code intelligently**.
-
----
-
-# 🎯 2. Smart Product Recommender System
-
-## 🔍 User Input
-
-```
-something for gaming
+# Available styles:  google | numpy | sphinx | markdown
+# Available details: concise | detailed | examples
 ```
 
-## ✅ System Output
+**Example output (Google style):**
 
-```
-📦 Recommendations:
+```python
+def add(a: int, b: int) -> int:
+    """Add two integers and return their sum.
 
-🎮 Gaming Laptop (Score: 0.95)
-High performance laptop for gaming with RTX 3060
+    Args:
+        a: The first integer operand.
+        b: The second integer operand.
 
-🎧 Gaming Headset (Score: 0.91)
-Surround sound headset for gaming
+    Returns:
+        The sum of a and b.
 
-⌨️ Mechanical Keyboard (Score: 0.87)
-RGB mechanical keyboard with blue switches
+    Example:
+        >>> add(2, 3)
+        5
+    """
+    return a + b
 ```
 
 ---
 
-## 🔄 User Action
+### 2. Ask Questions
+
+Ask natural-language questions about your code:
+
+```bash
+# Simple question (no context)
+ai-code-docs ask "What is memoization?"
+
+# With a specific file as context
+ai-code-docs ask "How does token verification work?" -f src/auth.py
+
+# Index a whole directory
+ai-code-docs ask "Where is pagination handled?" -d src/
+
+# Multiple files
+ai-code-docs ask "What does the cache layer do?" -f db.py -f cache.py
+```
+
+**Example output:**
 
 ```
-Select: Gaming Laptop
-```
-
-## ✅ System Output
-
-```
-Products similar to Gaming Laptop:
-
-• Gaming Headset - Surround sound headset for gaming  
-• Mechanical Keyboard - RGB mechanical keyboard  
-• Wireless Mouse - Ergonomic wireless mouse  
+The `cache.memoize` function wraps any callable with Redis-backed memoization.
+It serialises the function arguments into a cache key, checks Redis for a hit,
+and on a miss calls the original function and stores the result with the given TTL.
 ```
 
 ---
 
-# 📈 Final Output Summary
+### 3. Build README
 
-## 🔹 Code Assistant
+Generate a `README.md` interactively:
 
-* Converts code into **vector embeddings**
-* Converts query into **vector**
-* Finds **most relevant code snippets**
-* Displays results instantly
+```bash
+ai-code-docs readme
+```
 
-## 🔹 Recommender System
+You will be prompted for:
 
-* Understands **meaning of user query**
-* Suggests **contextually similar products**
-* Works beyond keyword matching
+```
+Project name: my-awesome-api
+Short description: A blazing-fast REST API for task management
+Tech stack (comma-separated): Python, FastAPI, PostgreSQL, Redis
+Key features (comma-separated): JWT auth, rate limiting, async endpoints
+```
 
-Code Assistant – Web UI Mockup
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  🤖 AI Code Documentation Assistant                                        │
-│  Ask questions about your codebase in plain English                        │
-├───────────────────────────────┬─────────────────────────────────────────────┤
-│  📁 Project Setup             │  💬 Ask about your code:                     │
-│                               │  ┌───────────────────────────────────────┐  │
-│  GitHub Repository URL        │  │ Where is the authentication logic?   │  │
-│  [https://github.com/...   ]  │  └───────────────────────────────────────┘  │
-│                               │                                             │
-│  [📥 Clone & Index Repository]│  🔍 Found in your code:                     │
-│                               │                                             │
-│  ─────────────────────────    │  📄 demo_project/app.py - function:        │
-│  💡 Example questions:        │     authenticate_user (Score: 0.94)        │
-│  • Where is the login func?   │  ┌───────────────────────────────────────┐  │
-│  • Show me database queries   │  │ def authenticate_user(username, pwd): │  │
-│  • How is authentication done?│  │     """Verify user credentials"""      │  │
-│                               │  │     return username=="admin" and ...   │  │
-│                               │  └───────────────────────────────────────┘  │
-│                               │  Description: Verify user credentials       │
-│                               │                                             │
-│                               │  📄 demo_project/app.py - function:        │
-│                               │     handle_api_request (Score: 0.72)        │
-│                               │  ┌───────────────────────────────────────┐  │
-│                               │  │ def handle_api_request(data):         │  │
-│                               │  │     """Process incoming API request"""│  │
-│                               │  │     return {"status":"success",...}    │  │
-│                               │  └───────────────────────────────────────┘  │
-└───────────────────────────────┴─────────────────────────────────────────────┘
-code output:
+Or pass everything as flags for scripting:
 
-📄 demo_project/app.py - function: authenticate_user (Score: 0.94)
-┌─────────────────────────────────────────────────────────────┐
-│ def authenticate_user(username, password):                 │
-│     """Verify user credentials"""                          │
-│     return username == "admin" and password == "secret"    │
-└─────────────────────────────────────────────────────────────┘
-Description: Verify user credentials
+```bash
+ai-code-docs readme \
+  --name "my-awesome-api" \
+  --description "A blazing-fast REST API for task management" \
+  --tech "Python, FastAPI, PostgreSQL, Redis" \
+  --features "JWT auth, rate limiting, async endpoints" \
+  --style detailed \
+  --output README.md
+```
 
-📄 demo_project/app.py - function: handle_api_request (Score: 0.52)
-┌─────────────────────────────────────────────────────────────┐
-│ def handle_api_request(data):                              │
-│     """Process incoming API request"""                     │
-│     return {"status": "success", "data": data}             │
-└─────────────────────────────────────────────────────────────┘
+---
 
+## 🧪 Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# With coverage report
+pytest --cov=ai_code_docs --cov-report=term-missing
+
+# Run a specific test file
+pytest tests/test_generator.py -v
+```
+
+All tests mock the Anthropic API — no real API calls are made during testing.
+
+---
+
+## 🔍 How It Works
+
+```
+Your code / question
+       │
+       ▼
+  ai_code_docs CLI  (Click)
+       │
+       ▼
+  AIClient  ──────────►  Anthropic API (Claude Sonnet)
+       │                        │
+  ┌────┴─────┐                  │ structured prompt
+  │generator │◄─────────────────┘
+  │searcher  │   answer / docs / README
+  │readme_   │
+  │builder   │
+  └──────────┘
+       │
+       ▼
+  stdout / file
+```
+
+1. **`client.py`** wraps the Anthropic SDK and manages the API key.
+2. **`generator.py`** builds a structured prompt with your code + chosen style/detail and returns the doc block.
+3. **`searcher.py`** maintains an in-memory `CodeIndex`, assembles context from indexed files, and calls Claude with your question.
+4. **`readme_builder.py`** takes a `ProjectInfo` dataclass and produces a full Markdown README.
+5. **`cli.py`** wires everything together with a Click command group.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/my-feature`
+3. Make your changes with tests
+4. Run `pytest` and ensure all tests pass
+5. Open a pull request
+
+Please open an issue first for major changes so we can discuss the approach.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">Built with ❤️ and <a href="https://anthropic.com">Claude AI</a></p>
